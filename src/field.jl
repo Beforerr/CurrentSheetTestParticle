@@ -5,7 +5,7 @@ const DEFAULT_SIGN = 1
 abstract type MagneticField <: Function end
 
 """
-    RotationDiscontinuity
+    RotationalDiscontinuity
 
 Rotating magnetic field. 
 
@@ -17,7 +17,7 @@ Rotating magnetic field.
 # Notes
 φ = β * tanh(z) is the polar angle
 """
-@kwdef struct RotationDiscontinuity{T1,T2,T3} <: MagneticField
+@kwdef struct RotationalDiscontinuity{T1,T2,T3} <: MagneticField
     B::T1 = 1
     θ::T2 = DEFAULT_θ
     β::T3 = DEFAULT_β
@@ -28,9 +28,9 @@ end
 # Keyword Arguments
 - `dir` : direction where the field depends on, 1, 2, or 3
 """
-B(r, conf::RotationDiscontinuity; dir=3) = conf(r; dir)
+B(r, conf::RotationalDiscontinuity; dir=3) = conf(r; dir)
 
-function (c::RotationDiscontinuity)(r; dir=3)
+function (c::RotationalDiscontinuity)(r; dir=3)
     B = c.B
     θ = c.θ
     z = r[dir]

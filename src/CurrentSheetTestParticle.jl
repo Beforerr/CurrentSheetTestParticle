@@ -8,7 +8,7 @@ using StaticArrays
 using UnPack
 using Moshi.Match: @match
 
-export RotationDiscontinuity, TD_B_field
+export RotationalDiscontinuity, TD_B_field
 export solve_params, dsolve_params
 export w_ϕ_pairs, init_state, init_states, init_states_pm, filter_wϕs!
 export isoutofdomain_params
@@ -32,7 +32,7 @@ const DEFAULT_BORIS_KWARGS = (; dt=1e-2, savestepinterval=1)
 const DEFAULT_TSPAN = (0, 256)
 const ez = SA[0, 0, 1]
 
-@kwdef struct ProblemParamsBase{F<:Function,V,A,I,T,D}
+@kwdef struct ProblemParamsBase{F,V,A,I,T,D}
     B::F
     v::V = 1
     alg::A = :AutoVern9
@@ -42,7 +42,7 @@ const ez = SA[0, 0, 1]
 end
 
 function RDProblemParams(; θ=DEFAULT_θ, β=DEFAULT_β, sign=DEFAULT_SIGN, kwargs...)
-    Bf = RotationDiscontinuity(; θ, β, sign)
+    Bf = RotationalDiscontinuity(; θ, β, sign)
     ProblemParamsBase(; B=Bf, kwargs...)
 end
 
