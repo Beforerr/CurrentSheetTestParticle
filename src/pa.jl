@@ -10,7 +10,7 @@ function cos_pitch_angle(u, B)
     return cos_rotation_angle(v, B)
 end
 
-function cos_pitch_angle(sol::ODESolution, i)
+function cos_pitch_angle(sol::ODESolution, i::Integer)
     B_func = sol.prob.p[3]
     u = sol.u[i]
     B = B_func(u)
