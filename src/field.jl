@@ -2,7 +2,8 @@ const DEFAULT_θ = 45
 const DEFAULT_β = 90
 const DEFAULT_SIGN = 1
 
-abstract type MagneticField <: Function end
+abstract type AbstractField <: Function end
+abstract type MagneticField <: AbstractField end
 
 """
     RotationalDiscontinuity
@@ -41,6 +42,8 @@ function (c::RotationalDiscontinuity)(r; dir=3)
     By = c.sign * B * sind(θ) * cosd(φ)
     return SVector{3}(Bx, By, Bz)
 end
+
+(c::RotationalDiscontinuity)(r, t; dir=3) = c(r; dir)
 
 
 function TD_B_field(r; dir=3, B=1, By=0, θ=DEFAULT_θ, β=DEFAULT_β, kw...)

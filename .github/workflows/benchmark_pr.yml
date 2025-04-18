@@ -3,7 +3,7 @@ name: Benchmark a pull request
 on:
   pull_request_target:
     branches:
-      - master
+      - main
 
 permissions:
   pull-requests: write
@@ -40,7 +40,7 @@ jobs:
       - name: Create plots from benchmarks
         run: |
           mkdir -p plots
-          benchpkgplot ${{ steps.extract-package-name.outputs.package_name }} --rev="${{github.event.repository.default_branch}},${{github.event.pull_request.head.sha}}" --npart=10 --format=png --input-dir=results/ --output-dir=plots/ --add https://github.com/LilithHafner/ChairmarksForAirspeedVelocity.jl
+          benchpkgplot ${{ steps.extract-package-name.outputs.package_name }} --rev="${{github.event.repository.default_branch}},${{github.event.pull_request.head.sha}}" --npart=10 --format=png --input-dir=results/ --output-dir=plots/
       - name: Upload plot as artifact
         uses: actions/upload-artifact@v4
         with:
