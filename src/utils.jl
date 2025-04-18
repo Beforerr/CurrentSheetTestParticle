@@ -37,7 +37,7 @@ function distance(p1, p2, d)
     return norm(n) / norm(d)
 end
 
-function get_gc_func(B)
-    param = prepare(E, B, species=User)
-    get_gc(param)
-end
+# function get_gc_func(B)
+#     param = prepare(E, B, species=User)
+#     get_gc(param)
+# end

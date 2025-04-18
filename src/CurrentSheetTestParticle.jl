@@ -1,5 +1,4 @@
 module CurrentSheetTestParticle
-using TestParticle
 using OrdinaryDiffEqRosenbrock
 using OrdinaryDiffEqVerner
 using SciMLBase: isinplace
@@ -9,7 +8,7 @@ using UnPack
 using Moshi.Match: @match
 
 export RotationalDiscontinuity, TD_B_field
-export solve_params, dsolve_params
+export solve_params
 export w_ϕ_pairs, init_state, init_states, init_states_pm, filter_wϕs!
 export isoutofdomain_params
 export ProblemParamsBase, ProblemParams, RDProblemParams
@@ -17,6 +16,7 @@ export trace_normalized_B!, trace_normalized_B
 
 include("utils.jl")
 include("field.jl")
+include("types.jl")
 include("state.jl")
 include("fieldline.jl")
 include("pa.jl")
@@ -47,8 +47,6 @@ function RDProblemParams(; θ=DEFAULT_θ, β=DEFAULT_β, sign=DEFAULT_SIGN, kwar
 end
 
 const ProblemParams = RDProblemParams
-const E0 = SVector(0.0, 0.0, 0.0)
-E(x) = E0
 
 isoutofdomain_z(z_max) = (u, p, t) -> abs(u[3]) > abs(z_max)
 
@@ -61,8 +59,8 @@ end
 """
 Solve the system of ODEs.
 """
-function solve_params(B, u0s::AbstractVector, tspan=DEFAULT_TSPAN, f=trace_normalized_B, iipv::Val{iip}=Val(false); E=E, alg=DEFAULT_SOLVER, diffeq=DEFAULT_DIFFEQ_KWARGS, kwargs...) where {iip}
-    param = prepare(E, B; species=User)
+function solve_params(B, u0s::AbstractVector, tspan=DEFAULT_TSPAN, f=trace_normalized_B, iipv::Val{iip}=Val(false); E=E0func, alg=DEFAULT_SOLVER, diffeq=DEFAULT_DIFFEQ_KWARGS, kwargs...) where {iip}
+    param = Parameters(; E, B)
     u0s = iip ? u0s : [SVector{6}(u0) for u0 in u0s]
     ensemble_solve(f, u0s, tspan, param, _alg(alg), iipv; merge(diffeq, kwargs)...)
 end
@@ -76,16 +74,6 @@ function ensemble_solve(f, u0s::AbstractVector, tspan, param, alg, ::Val{iip}; k
     prob_func = (prob, i, repeat=nothing) -> remake(prob, u0=u0s[i])
     ensemble_prob = EnsembleProblem(prob; prob_func, safetycopy=false)
     solve(ensemble_prob, alg, EnsembleThreads(); trajectories=length(u0s), kwargs...)
-end
-
-function solve_params_boris(B, u0s::AbstractVector; E=E, tspan=DEFAULT_TSPAN, diffeq=DEFAULT_BORIS_KWARGS, kwargs...)
-    solve_kwargs = merge(diffeq, kwargs)
-
-    param = prepare(E, B; species=User)
-    prob_func = (prob, i, repeat=nothing) -> remake(prob, u0=u0s[i])
-    prob = TraceProblem(u0s[1], tspan, param; prob_func)
-
-    TestParticle.solve(prob, EnsembleThreads(); trajectories=length(u0s), solve_kwargs...)
 end
 
 function solve_params(d::ProblemParamsBase; kwargs...)
