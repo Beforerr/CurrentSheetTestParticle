@@ -1,7 +1,7 @@
 name: Benchmark a pull request
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
 
@@ -20,7 +20,7 @@ jobs:
         id: extract-package-name
         run: |
           PACKAGE_NAME=$(grep "^name" Project.toml | sed 's/^name = "\(.*\)"$/\1/')
-          echo "::set-output name=package_name::$PACKAGE_NAME"
+          echo "package_name=$PACKAGE_NAME" >> $GITHUB_OUTPUT
       - name: Build AirspeedVelocity
         env:
           JULIA_NUM_THREADS: 2
