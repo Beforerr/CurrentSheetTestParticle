@@ -9,7 +9,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  generate_plots:
+  generate_tables:
     runs-on: ubuntu-latest
 
     steps:
