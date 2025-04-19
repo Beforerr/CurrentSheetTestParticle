@@ -1,3 +1,4 @@
+const ez = SA[0, 0, 1]
 const DEFAULT_Z_INIT_0 = 5
 # TODO: check the initial position effect
 """
