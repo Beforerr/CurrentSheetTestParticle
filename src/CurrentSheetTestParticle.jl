@@ -66,12 +66,12 @@ end
 """
 Type-stable version of `solve` for `solve_params`.
 """
-function ensemble_solve(f, u0s::AbstractVector, tspan, param, alg, ::Val{iip}; kwargs...) where {iip}
+function ensemble_solve(f, u0s::AbstractVector, tspan, param, alg, ::Val{iip}; ensemblealg=EnsembleThreads(), kwargs...) where {iip}
     # Making tspan float for Type stability: https://discourse.julialang.org/t/type-instability-when-solving-odeproblem/105687
     prob = ODEProblem{iip}(f, u0s[1], Float64.(tspan), param)
     prob_func = (prob, i, repeat=nothing) -> remake(prob, u0=u0s[i])
     ensemble_prob = EnsembleProblem(prob; prob_func, safetycopy=false)
-    solve(ensemble_prob, alg, EnsembleThreads(); trajectories=length(u0s), kwargs...)
+    solve(ensemble_prob, alg, ensemblealg; trajectories=length(u0s), kwargs...)
 end
 
 function solve_params(d::ProblemParamsBase; kwargs...)
