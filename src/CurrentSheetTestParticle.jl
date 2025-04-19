@@ -1,10 +1,8 @@
 module CurrentSheetTestParticle
 using OrdinaryDiffEqRosenbrock
-using OrdinaryDiffEqVerner
-using SciMLBase: isinplace
+using OrdinaryDiffEqVerner: AutoVern9, @unpack
 using LinearAlgebra
 using StaticArrays
-using UnPack
 using Moshi.Match: @match
 
 export RotationalDiscontinuity, TD_B_field
