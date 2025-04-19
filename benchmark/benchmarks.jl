@@ -1,6 +1,8 @@
 using ChairmarksForAirspeedVelocity
 using CurrentSheetTestParticle
 using Logging
+using ChairmarksForAirspeedVelocity: Chairmarks
+Chairmarks.DEFAULTS.seconds = 1
 
 const SUITE = BenchmarkGroup()
 
