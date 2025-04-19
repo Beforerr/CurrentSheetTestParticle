@@ -31,18 +31,17 @@ end
 """
 B(r, conf::RotationalDiscontinuity; dir=3) = conf(r; dir)
 
-function (c::RotationalDiscontinuity)(r; dir=3)
+function (c::RotationalDiscontinuity)(z)
     B = c.B
     θ = c.θ
-    z = r[dir]
-
     φ = c.β * tanh(z)
     Bz = B * cosd(θ)
     Bx = B * sind(θ) * sind(φ)
     By = c.sign * B * sind(θ) * cosd(φ)
-    return SVector{3}(Bx, By, Bz)
+    return SVector(Bx, By, Bz)
 end
 
+(c::RotationalDiscontinuity)(r::AbstractArray; dir=3) = c(r[dir])
 (c::RotationalDiscontinuity)(r, t; dir=3) = c(r; dir)
 
 

@@ -31,12 +31,12 @@ end
 """
 Distance of two line solutions
 """
-distance(sol1::ODESolution, sol2::ODESolution) = distance(sol1[1:3, :]', sol2[1:3, :]')
+@views distance(sol1::ODESolution, sol2::ODESolution) = distance(sol1[1:3, :]', sol2[1:3, :]')
 
 """
 Asymptotic distance between two line solutions
 """
-function field_lines_asym_distance(sol1, sol2, B)
+@views function field_lines_asym_distance(sol1, sol2, B)
     direction = B([0, 0, Inf])
     p1 = sol1[argmax(sol1[3, :])]
     p2 = sol2[argmax(sol2[3, :])]
