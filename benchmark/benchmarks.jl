@@ -1,5 +1,6 @@
 using ChairmarksForAirspeedVelocity
 using CurrentSheetTestParticle
+using Logging
 
 const SUITE = BenchmarkGroup()
 
