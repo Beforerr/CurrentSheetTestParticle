@@ -4,22 +4,17 @@ drds = B(r) / |B(r)|
 """
 function field_line_ode!(drds, r, p, t)
     B_field = p[1]
-    B = B_field(r)
-    B_norm = norm(B)
-    drds[1] = B[1] / B_norm
-    drds[2] = B[2] / B_norm
-    drds[3] = B[3] / B_norm
+    drds .= normalize(B_field(r))
 end
 
 function solve_fl(r, B_field, args...; tspan=DEFAULT_TSPAN, kwargs...)
     prob = ODEProblem(field_line_ode!, r, tspan, (B_field,))
-    return solve(prob, args...; verbose=false, kwargs...)
+    return solve(prob, Vern9(), args...; verbose=false, kwargs...)
 end
 
 function field_lines(sol, B; kwargs...)
-    gc = get_gc_func(B)
-    gc0 = gc(sol[1])
-    gcf = gc(sol[end])
+    gc0 = guiding_center(sol[1], B)
+    gcf = guiding_center(sol[end], B)
     isoutofdomain = (u, p, t) -> abs(u[3]) > maximum(abs.(sol[3, :]))
     Bz0 = B(gc0)[3] # this only works for constant Bz
     tmax = 100 * sol.t[end]
@@ -31,17 +26,21 @@ end
 """
 Distance of two line solutions
 """
-@views distance(sol1::ODESolution, sol2::ODESolution) = distance(sol1[1:3, :]', sol2[1:3, :]')
+@views distance(sol1::ODESolution, sol2::ODESolution) = distance(sol1[1:3, :], sol2[1:3, :])
 
 """
 Asymptotic distance between two line solutions
 """
-@views function field_lines_asym_distance(sol1, sol2, B)
+
+@views function field_lines_asym_distance(u1s, u2s, B)
     direction = B([0, 0, Inf])
-    p1 = sol1[argmax(sol1[3, :])]
-    p2 = sol2[argmax(sol2[3, :])]
+    p1 = u1s[argmax(u1s[3, :])]
+    p2 = u2s[argmax(u2s[3, :])]
     distance(p1, p2, direction)
 end
+
+field_lines_asym_distance(sol1::ODESolution, sol2::ODESolution, B) =
+    field_lines_asym_distance(sol1.u, sol2.u, B)
 
 """
 Field lines distances

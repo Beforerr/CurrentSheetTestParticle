@@ -1,6 +1,6 @@
 module CurrentSheetTestParticle
 using OrdinaryDiffEqRosenbrock
-using OrdinaryDiffEqVerner: AutoVern9, @unpack
+using OrdinaryDiffEqVerner: AutoVern9, Vern9, @unpack
 using LinearAlgebra
 using StaticArrays
 using Moshi.Match: @match

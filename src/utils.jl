@@ -7,16 +7,14 @@ function _alg(alg::Symbol)
     end
 end
 
-function distance(A, B)
-    n, m = size(A, 1), size(B, 1)
+function distance(r1s, r2s)
+    n = size(r1s, 1)
     result = zeros(n)
     Threads.@threads for i = 1:n
         minSqDist = Inf
-        @inbounds for j = 1:m
-            dx = A[i, 1] - B[j, 1]
-            dy = A[i, 2] - B[j, 2]
-            dz = A[i, 3] - B[j, 3]
-            sqDist = dx * dx + dy * dy + dz * dz
+        @inbounds for j in eachindex(r2s)
+            dr = r1s[i] - r2s[j]
+            sqDist = dr ⋅ dr
             if sqDist < minSqDist
                 minSqDist = sqDist
             end
@@ -25,6 +23,8 @@ function distance(A, B)
     end
     return minimum(result) |> sqrt
 end
+
+distance(A::AbstractMatrix, B::AbstractMatrix) = distance(eachcol(A), eachcol(B))
 
 """
 Calculate the distance between two parallel lines.
@@ -37,7 +37,16 @@ function distance(p1, p2, d)
     return norm(n) / norm(d)
 end
 
-# function get_gc_func(B)
-#     param = prepare(E, B, species=User)
-#     get_gc(param)
-# end
+get_v(u) = @view u[4:6]
+get_r(u) = @view u[1:3]
+_get_r(u) = u[SA[1, 2, 3]]
+get_q2m(p) = p[1] / p[2]
+get_B(p) = p[3]
+
+function Larmor_vector(𝐯, 𝐁, q2m)
+    (𝐁 × 𝐯) ./ (q2m * 𝐁 ⋅ 𝐁)
+end
+
+guiding_center(𝐫, 𝐯, 𝐁, q2m) = 𝐫 - Larmor_vector(𝐯, 𝐁, q2m)
+guiding_center(xu, Bf::Function, q2m=1) =
+    guiding_center(get_r(xu), get_v(xu), Bf(xu), q2m)
