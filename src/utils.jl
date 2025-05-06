@@ -8,20 +8,12 @@ function _alg(alg::Symbol)
 end
 
 function distance(r1s, r2s)
-    n = size(r1s, 1)
-    result = zeros(n)
-    Threads.@threads for i = 1:n
-        minSqDist = Inf
-        @inbounds for j in eachindex(r2s)
-            dr = r1s[i] - r2s[j]
-            sqDist = dr ⋅ dr
-            if sqDist < minSqDist
-                minSqDist = sqDist
-            end
+    result = minimum(r1s) do r1
+        minimum(r2s) do r2
+            (r1 - r2) ⋅ (r1 - r2)
         end
-        result[i] = minSqDist
     end
-    return minimum(result) |> sqrt
+    return sqrt(result)
 end
 
 distance(A::AbstractMatrix, B::AbstractMatrix) = distance(eachcol(A), eachcol(B))
