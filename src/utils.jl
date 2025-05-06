@@ -37,8 +37,9 @@ function distance(p1, p2, d)
     return norm(n) / norm(d)
 end
 
+get_r(u) = u[SA[1, 2, 3]]
+get_z(u) = u[3]
 get_v(u) = @view u[4:6]
-get_r(u) = @view u[1:3]
 _get_r(u) = u[SA[1, 2, 3]]
 get_q2m(p) = p[1] / p[2]
 get_B(p) = p[3]
