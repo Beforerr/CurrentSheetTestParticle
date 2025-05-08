@@ -3,13 +3,17 @@ function RDProblemParams(; θ=DEFAULT_θ, β=DEFAULT_β, sign=DEFAULT_SIGN, kwar
     ProblemParamsBase(; B=Bf, kwargs...)
 end
 
-isoutofdomain_z(z_max) = (u, p, t) -> abs(u[3]) > abs(z_max)
-
 function isoutofdomain_params(v)
     z_init = init_z_pos(v)
     z_max = 2 * z_init
-    return isoutofdomain_z(z_max)
+    return OutOfDomainZ(abs(z_max))
 end
+
+struct OutOfDomainZ
+    z_max::Float64
+end
+
+(o::OutOfDomainZ)(u, p, t) = abs(u[3]) > o.z_max
 
 """
 Solve the system of ODEs.

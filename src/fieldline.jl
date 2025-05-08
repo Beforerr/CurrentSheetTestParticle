@@ -13,7 +13,7 @@ function field_lines(sol, B; kwargs...)
     gc0 = guiding_center(sol[1], B)
     gcf = guiding_center(sol[end], B)
     zmax = maximum(abs ∘ get_z, sol.u)
-    isoutofdomain = (u, p, t) -> abs(get_z(u)) > zmax
+    isoutofdomain = OutOfDomainZ(zmax)
     Bz0 = B(gc0)[3] # this only works for constant Bz
     tmax = 100 * sol.t[end]
     fl0_sol = solve_fl(gc0, B; tspan=(0, -sign(Bz0 * gc0[3]) * tmax), isoutofdomain, kwargs...)
