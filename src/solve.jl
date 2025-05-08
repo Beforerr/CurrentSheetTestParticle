@@ -24,6 +24,13 @@ function solve_params(B, u0s, tspan=DEFAULT_TSPAN, f=trace_normalized_B, iipv::V
     ensemble_solve(f, u0s, tspan, param, _alg(alg), iipv; merge(diffeq, kwargs)...)
 end
 
+function solve_param(B, u0, tspan=DEFAULT_TSPAN, f=trace_normalized_B, iipv::Val{iip}=Val(false); E=F0func, alg=DEFAULT_SOLVER, diffeq=DEFAULT_DIFFEQ_KWARGS, kwargs...) where {iip}
+    param = Parameters(; E, B)
+    u0 = iip ? u0 : SVector{6}(u0)
+    prob = ODEProblem{iip}(f, u0, Float64.(tspan), param)
+    solve(prob, _alg(alg); merge(diffeq, kwargs)...)
+end
+
 """
 Type-stable version of `solve` for `solve_params`.
 """
@@ -41,5 +48,5 @@ function solve_params(d::ProblemParamsBase; kwargs...)
 
     isoutofdomain = isoutofdomain_params(v)
     sol = solve_params(B, u0s, d.tspan; alg, diffeq, isoutofdomain, kwargs...)
-    return sol, (wϕs, B)
+    return sol, (wϕs, B, u0s)
 end

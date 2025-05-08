@@ -20,4 +20,5 @@ include("fieldline.jl")
 include("pa.jl")
 include("equations.jl")
 include("solve.jl")
+include("analysis.jl")
 end

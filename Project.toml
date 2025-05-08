@@ -3,6 +3,8 @@ uuid = "70b924fa-544d-466c-bf9c-e2ef4b9a84d3"
 version = "0.1.0"
 
 [deps]
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+DataFramesMeta = "1313f7d8-7da2-5740-9ea0-a2ca25f37964"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 Moshi = "2e0e35c7-a2e4-4343-998d-7ef72827ed2d"
 OrdinaryDiffEqRosenbrock = "43230ef6-c299-4910-a778-202eb28ce4ce"
@@ -10,6 +12,8 @@ OrdinaryDiffEqVerner = "79d7bb75-1356-48c1-b8c0-6832512096c2"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
+DataFrames = "1.7"
+DataFramesMeta = "0.15"
 LinearAlgebra = "1"
 Moshi = "0.3"
 OrdinaryDiffEqRosenbrock = "1"

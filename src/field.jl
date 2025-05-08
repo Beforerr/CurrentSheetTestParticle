@@ -5,6 +5,12 @@ const DEFAULT_SIGN = 1
 abstract type AbstractField <: Function end
 abstract type MagneticField <: AbstractField end
 
+struct ConstField{T} <: MagneticField
+    𝐁::T
+end
+
+(c::ConstField)(args...) = c.𝐁
+
 """
     RotationalDiscontinuity
 
