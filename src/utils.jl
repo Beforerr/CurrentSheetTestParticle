@@ -16,7 +16,7 @@ function distance(r1s, r2s)
     return sqrt(result)
 end
 
-distance(A::AbstractMatrix, B::AbstractMatrix) = distance(eachcol(A), eachcol(B))
+distance(A::AbstractMatrix, B::AbstractMatrix; dims=1) = distance(eachslice(A, dims=dims), eachslice(B, dims=dims))
 
 """
 Calculate the distance between two parallel lines.
@@ -24,9 +24,8 @@ Calculate the distance between two parallel lines.
 Each line is defined by one point and a direction vector.
 """
 function distance(p1, p2, d)
-    v = p2 .- p1
-    n = cross(v, d)
-    return norm(n) / norm(d)
+    r = p2 - p1
+    return sqrt(r ⋅ r - (r ⋅ d)^2 / (d ⋅ d))
 end
 
 get_r(u) = u[SA[1, 2, 3]]

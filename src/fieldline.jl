@@ -5,20 +5,24 @@ drds = B(r) / |B(r)|
 field_line_ode(r, B_field, t) = normalize(B_field(r))
 
 function solve_fl(r, B_field, args...; tspan=DEFAULT_TSPAN, kwargs...)
-    prob = ODEProblem(field_line_ode, r, tspan, B_field)
+    prob = ODEProblem(field_line_ode, get_r(r), tspan, B_field)
     return solve(prob, Vern9(), args...; verbose=false, kwargs...)
+end
+
+function field_lines(gc0, gcf, B; tmax=100, zmax=nothing, kwargs...)
+    zmax = @something zmax maximum(abs ∘ get_z, [gc0, gcf])
+    isoutofdomain = OutOfDomainZ(zmax)
+    Bz0 = B(gc0)[3] # this only works for constant Bz
+    fl0_sol = solve_fl(gc0, B; tspan=(0, -sign(Bz0 * gc0[3]) * tmax), isoutofdomain, kwargs...)
+    flf_sol = solve_fl(gcf, B; tspan=(0, -sign(Bz0 * gcf[3]) * tmax), isoutofdomain, kwargs...)
+    return fl0_sol, flf_sol
 end
 
 function field_lines(sol, B; kwargs...)
     gc0 = guiding_center(sol[1], B)
     gcf = guiding_center(sol[end], B)
     zmax = maximum(abs ∘ get_z, sol.u)
-    isoutofdomain = OutOfDomainZ(zmax)
-    Bz0 = B(gc0)[3] # this only works for constant Bz
-    tmax = 100 * sol.t[end]
-    fl0_sol = solve_fl(gc0, B; tspan=(0, -sign(Bz0 * gc0[3]) * tmax), isoutofdomain, kwargs...)
-    flf_sol = solve_fl(gcf, B; tspan=(0, -sign(Bz0 * gcf[3]) * tmax), isoutofdomain, kwargs...)
-    return fl0_sol, flf_sol
+    return field_lines(gc0, gcf, B; tmax=100 * sol.t[end], zmax, kwargs...)
 end
 
 """
@@ -28,6 +32,8 @@ Asymptotic distance between two line solutions
     direction = B([0, 0, Inf])
     p1 = argmax(get_z, u1s)
     p2 = argmax(get_z, u2s)
+    @assert p1[3] > 0 "p1 is below the current sheet"
+    @assert p2[3] > 0 "p2 is below the current sheet"
     distance(p1, p2, direction)
 end
 
