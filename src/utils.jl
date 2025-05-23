@@ -25,7 +25,10 @@ Each line is defined by one point and a direction vector.
 """
 function distance(p1, p2, d)
     r = p2 - p1
-    return sqrt(r ⋅ r - (r ⋅ d)^2 / (d ⋅ d))
+    # Calculate the value under the square root
+    val = r ⋅ r - (r ⋅ d)^2 / (d ⋅ d)
+    # Handle potential floating point errors that can cause slightly negative values
+    return sqrt(max(0.0, val))
 end
 
 get_r(u) = u[SA[1, 2, 3]]
