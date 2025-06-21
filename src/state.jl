@@ -78,7 +78,7 @@ inverse_v(v, B0; e1=ez) = inverse_v(v..., local_B_coord(B0; e1)...)
 inverse_v(u, B::Function; kw...) = @views inverse_v(u[4:6], B(u[1:3]); kw...)
 
 init_range(::Nothing; start, stop, length=2) = range(; start, stop, length)
-init_range(x::AbstractArray; kw...) = x
+init_range(x; kw...) = x
 init_range(x::Number; kw...) = [x]
 
 """
@@ -90,7 +90,7 @@ function w_ϕ_pairs(; Nw=8, Nϕ=8, w=nothing, ϕ=nothing)
     w_ϕ_pairs(ws, ϕs)
 end
 
-w_ϕ_pairs(ws::AbstractArray, ϕs::AbstractArray) = [(w, ϕ) for w in ws for ϕ in ϕs]
+w_ϕ_pairs(ws, ϕs) = [(w, ϕ) for w in ws for ϕ in ϕs]
 
 """
 Filter pitch angle corresponding to particles moving toward the current sheet

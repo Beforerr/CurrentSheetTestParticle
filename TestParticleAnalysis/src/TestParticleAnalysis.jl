@@ -4,6 +4,8 @@ module TestParticleAnalysis
 using AlgebraOfGraphics
 using LaTeXStrings
 
+include("Makie.jl")
+
 tp_pairing() = (
     β=:β => L"β",
     μ0=:μ0 => L"μ_0",
