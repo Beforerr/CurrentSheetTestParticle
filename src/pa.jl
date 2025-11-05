@@ -1,24 +1,18 @@
-function cos_rotation_angle(v1, v2)
-    return v1 ⋅ v2 / (norm(v1) * norm(v2))
-end
+using LinearAlgebra: norm, dot
 
-"""
-Cos pitch angle
-"""
+export cos_pitch_angle, cos_pitch_angles, pa
+export magnetic_moment, magnetic_moments
+
+"Cos pitch angle"
 function cos_pitch_angle(u, B)
-    v = @view u[4:6]
-    return cos_rotation_angle(v, B)
-end
-
-function cos_pitch_angle(sol::ODESolution, i::Integer)
-    B_func = sol.prob.p[3]
-    u = sol.u[i]
-    B = B_func(u)
-    return cos_pitch_angle(u, B)
+    v = u[SA[4, 5, 6]]
+    return clamp(v ⋅ B / (norm(v) * norm(B)), -1, 1)
 end
 
 cos_pitch_angle(u, B::Function) = cos_pitch_angle(u, B(u))
 
-const pa = cos_pitch_angle
+function cos_pitch_angles(sol)
+    return @. cos_pitch_angle(sol.u, 𝓑(sol))
+end
 
-export cos_pitch_angle, pa
+const pa = cos_pitch_angle

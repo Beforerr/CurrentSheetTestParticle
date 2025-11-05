@@ -1,33 +1,43 @@
 module Analysis
-using ..CurrentSheetTestParticle: cos_pitch_angle
+using ..CurrentSheetTestParticle: cos_pitch_angle, magnetic_moment, field_lines_asym_distance, 𝓑, get_r, get_v
+using LinearAlgebra: norm
 using DataFrames, DataFramesMeta
 
-export process_sols, process!
+export extract_info, process_sols, process!
 
 function extract_info(sol)
     u0 = sol.prob.u0
     u1 = sol.u[end]
     t1 = sol.t[end]
-    return (; u0, u1, t1)
+    tmax = sol.prob.tspan[2]
+    # dR_perp_asym = field_lines_asym_distance(sol)
+    return (; u0, u1, t1, tmax)
 end
 
-process_sols(sols) = DataFrame(map(extract_info, sols))
+function process_sols(sols)
+    df = DataFrame(map(extract_info, sols))
+    df.B .= map(𝓑, sols)
+    return @rtransform! df @astable begin
+        :μ0 = cos_pitch_angle(:u0, :B)
+        :μ1 = cos_pitch_angle(:u1, :B)
+        :α0 = acosd.(:μ0)
+        :α1 = acosd.(:μ1)
+        :M0 = magnetic_moment(:u0, :B)
+        :M1 = magnetic_moment(:u1, :B)
+        :M_max = norm(get_v(:u0))^2 / (2 * norm((:B)(get_r(:u0))))
+        :ΔM_norm = (:M1 - :M0) / :M_max
+    end
+end
 
-function process_sols(sols, B, wϕs)
+function process_sols(prob, sols)
     df = process_sols(sols)
-    df.wϕ0 .= wϕs
-    df.B .= B
-    return df
+    df.v .= prob.v
+    return process!(df)
 end
 
 function process!(df)
-    "wϕ0" in names(df) && @chain df begin
-        @rtransform!(:μ0 = :wϕ0[1], :ϕ0 = :wϕ0[2], :μ1 = cos_pitch_angle(:u1, :B))
-        @transform!(:μ0 = clamp.(:μ0, -1, 1), :μ1 = clamp.(:μ1, -1, 1))
-        @transform!(:α0 = acosd.(:μ0), :α1 = acosd.(:μ1))
-        @transform!(:Δα = :α1 .- :α0, :Δμ = :μ1 .- :μ0)
-    end
-
+    "dR_perp_asym" in names(df) && @transform!(df, :dR_perp_asym_norm = :dR_perp_asym ./ :v)
+    @transform!(df, :leave = :t1 .!= :tmax)
     return df
 end
 

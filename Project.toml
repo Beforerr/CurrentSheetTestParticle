@@ -5,18 +5,30 @@ version = "0.1.0"
 [deps]
 DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 DataFramesMeta = "1313f7d8-7da2-5740-9ea0-a2ca25f37964"
+JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Magnetostatics = "a95f4e4b-d819-46a2-b455-0f3018e15a60"
 Moshi = "2e0e35c7-a2e4-4343-998d-7ef72827ed2d"
 OrdinaryDiffEqRosenbrock = "43230ef6-c299-4910-a778-202eb28ce4ce"
 OrdinaryDiffEqVerner = "79d7bb75-1356-48c1-b8c0-6832512096c2"
+QuadGK = "1fd47b50-473d-5c70-9696-f719f8f3bcdc"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+UnPack = "3a884ed6-31ef-47d7-9d2a-63182c4928ed"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+
+[sources]
+Magnetostatics = {path = "lib/Magnetostatics"}
 
 [compat]
 DataFrames = "1.7"
 DataFramesMeta = "0.15"
+JLD2 = "0.6.3"
 LinearAlgebra = "1"
 Moshi = "0.3"
 OrdinaryDiffEqRosenbrock = "1"
 OrdinaryDiffEqVerner = "1"
+QuadGK = "2"
 StaticArrays = "1"
+UnPack = "1.0.2"
+Unitful = "1.25.1"
 julia = "1.10"
